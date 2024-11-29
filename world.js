@@ -1,8 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
     const lookupButton = document.getElementById("lookup");
+    const lookupCitiesButton = document.getElementById("lookup-cities");
     const resultDiv = document.getElementById("result");
 
-    // Listen for click on "Lookup" button
+    // Lookup button
     lookupButton.addEventListener("click", function() {
         const country = document.getElementById("country").value.trim();
         const url = `world.php?country=${encodeURIComponent(country)}`;
@@ -10,44 +11,33 @@ document.addEventListener("DOMContentLoaded", function() {
         // Clear previous results
         resultDiv.innerHTML = "";
 
-        // Fetch the data from world.php
+        // Fetch the data from world.php 
         fetch(url)
-            .then(response => response.json())  // Parse the JSON response
+            .then(response => response.text())  // Parse the response
             .then(data => {
-                if (data.success) {
-                    // If the search is successful, create and display the table
-                    let tableHTML = `
-                        <table border="1" cellpadding="10" cellspacing="0">
-                            <thead>
-                                <tr>
-                                    <th>Country Name</th>
-                                    <th>Continent</th>
-                                    <th>Independence Year</th>
-                                    <th>Head of State</th>
-                                </tr>
-                            </thead>
-                            <tbody>`;
-
-                    // Loop through the data and create rows for the table
-                    data.data.forEach(country => {
-                        tableHTML += `
-                            <tr>
-                                <td>${country.name}</td>
-                                <td>${country.continent}</td>
-                                <td>${country.independence_year}</td>
-                                <td>${country.head_of_state}</td>
-                            </tr>`;
-                    });
-
-                    tableHTML += `</tbody></table>`;
-                    resultDiv.innerHTML = tableHTML;  // Insert the table into the result div
-                } else {
-                    // If no results found, display the message
-                    resultDiv.innerHTML = `<p>No countries found matching that name.</p>`;
-                }
+                resultDiv.innerHTML = data;  // Insert the table into the result div
             })
             .catch(error => {
-                // Handle any errors that occurred during the fetch
+                resultDiv.innerHTML = `<p>An error occurred while fetching the data. Please try again.</p>`;
+                console.error('Fetch error:', error);
+            });
+    });
+
+    // Lookup Cities button
+    lookupCitiesButton.addEventListener("click", function() {
+        const country = document.getElementById("country").value.trim();
+        const url = `world.php?country=${encodeURIComponent(country)}&lookup=cities`;
+
+        // Clear previous results
+        resultDiv.innerHTML = "";
+
+        // Fetch the data from world.php 
+        fetch(url)
+            .then(response => response.text())  // Parse the response
+            .then(data => {
+                resultDiv.innerHTML = data;  // Insert the table into the result div
+            })
+            .catch(error => {
                 resultDiv.innerHTML = `<p>An error occurred while fetching the data. Please try again.</p>`;
                 console.error('Fetch error:', error);
             });
